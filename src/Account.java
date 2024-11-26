@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package bankaccountmanager;
+import java.util.Random;
 
 /**
  *
@@ -69,7 +70,20 @@ public class Account implements AccountInterface {
         accountNumber = 1000000l + rand.nextLong(9000000);
         return String.valueOf(accountNumber);   
     }
-    public void transfer(String acc1, String acc2){
-    
+    public void transfer(Account accType, double amount) throws Exception 
+    {
+        if (amount > 0) {
+            if (this.balance >= amount) {
+                this.withdraw(amount); 
+                accType.deposit(amount);
+                System.out.println("Transferred " + amount + " to " + accType.getAccountHolder());
+            } else {
+                throw new Exception("Insufficient funds to transfer.");
+            }
+        } else {
+            System.out.println("Invalid transfer amount.");
+                         
+    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     }
 }
