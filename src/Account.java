@@ -8,7 +8,7 @@ package bankaccountmanager;
  *
  * @author Capaciti
  */
-public class Account {
+public class Account implements AccountInterface {
     private String accountHolder;
     private String accountNumber;
     private double balance;
@@ -37,7 +37,7 @@ public class Account {
         this.balance = balance;
     }
 
-    public void deposit(double amount) {
+    public void deposit(double amount) {    
         if (amount > 0) {
             setBalance(getBalance() + amount);
             System.out.println("You have deposited: " + amount);
@@ -47,6 +47,11 @@ public class Account {
         }
     }
 
+    /**
+     *
+     * @param amount
+     * @throws Exception
+     */
     public void withdraw(double amount) throws Exception {
         if (amount > getBalance()) {
             throw new Exception("Insufficient funds.");
@@ -57,5 +62,14 @@ public class Account {
         } else {
             System.out.println("Invalid withdraw amount.");
         }
+    }
+    public String accountGenerator(){
+        Random rand = new Random();
+        long accountNumber;
+        accountNumber = 1000000l + rand.nextLong(9000000);
+        return String.valueOf(accountNumber);   
+    }
+    public void transfer(String acc1, String acc2){
+    
     }
 }
