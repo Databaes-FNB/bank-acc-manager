@@ -1,190 +1,25 @@
-import java.util.Scanner;
 import java.util.Random;
 
-class BankDetails {
-    private String accno; // Automatically generated account number
-    private String name;
-    private String acc_type; // Account type: Savings or Cheque
-    private long balance = 0; // Common balance for the account
-    Scanner sc = new Scanner(System.in);
+class SavingsAccount extends BankDetails {
+    private static final double INTEREST_RATE = 0.03; // Example interest rate: 3%
 
-    // Method to open a new account
+    @Override
     public void openAccount() {
         Random random = new Random();
-        System.out.print("Enter Account type (Savings/Cheque): ");
-        acc_type = sc.next();
-
-        // Generate account number based on account type
-        if (acc_type.equalsIgnoreCase("Savings")) {
-            accno = "SAV" + (100000 + random.nextInt(900000)); // SAV prefix for savings accounts
-        } else if (acc_type.equalsIgnoreCase("Cheque")) {
-            accno = "CHQ" + (100000 + random.nextInt(900000)); // CHQ prefix for cheque accounts
-        } else {
-            System.out.println("Invalid account type! Defaulting to Savings.");
-            acc_type = "Savings";
-            accno = "SAV" + (100000 + random.nextInt(900000));
-        }
-
+        accno = "SAV" + (100000 + random.nextInt(900000));
         System.out.print("Enter Name: ");
         name = sc.next();
-
-        System.out.println("Account created successfully!");
-        System.out.println("Account Type: " + acc_type);
+        System.out.println("Savings Account created successfully!");
         System.out.println("Account Number: " + accno);
         System.out.println("Initial Balance: " + balance);
     }
 
-    // Method to display account details
-    public void showAccount() {
-        System.out.println("Name of account holder: " + name);
-        System.out.println("Account no.: " + accno);
-        System.out.println("Account type: " + acc_type);
-        System.out.println("Balance: " + balance);
-    }
-
-    // Method to deposit money
-    public void deposit() {
-        System.out.println("Enter the amount you want to deposit: ");
-        long amt = sc.nextLong();
-        if (amt > 0) {
-            balance += amt;
-            System.out.println("Amount deposited successfully! New Balance: " + balance);
-        } else {
-            System.out.println("Invalid deposit amount.");
+    // Method to apply interest to the account balance
+    public void applyInterest() {
+        if (balance > 0) {
+            double interest = balance * INTEREST_RATE;
+            balance += interest;
+            System.out.println("Monthly interest of " + interest + " applied to account: " + accno);
         }
-    }
-
-    // Method to withdraw money
-    public void withdrawal() {
-        System.out.println("Enter the amount you want to withdraw: ");
-        long amt = sc.nextLong();
-        if (amt > 0 && amt <= balance) {
-            balance -= amt;
-            System.out.println("Amount withdrawn successfully! New Balance: " + balance);
-        } else {
-            System.out.println("Invalid withdrawal amount or insufficient balance.");
-        }
-    }
-
-    // Method to transfer money to another account
-    public void transfer(BankDetails recipient) {
-        System.out.println("Enter the amount you want to transfer: ");
-        long amt = sc.nextLong();
-        if (amt > 0 && amt <= balance) {
-            balance -= amt;
-            recipient.balance += amt;
-            System.out.println("Amount transferred successfully!");
-            System.out.println("Your new balance: " + balance);
-            System.out.println("Recipient's new balance: " + recipient.balance);
-        } else {
-            System.out.println("Invalid transfer amount or insufficient balance.");
-        }
-    }
-
-    // Method to search for an account by number
-    public boolean search(String ac_no) {
-        return accno.equals(ac_no);
-    }
-
-    public String getAccNo() {
-        return accno;
-    }
-}
-
-public class BankingApp {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        BankDetails[] accounts = new BankDetails[2]; // Allow up to two accounts
-
-        int accountCount = 0; // Track the number of created accounts
-
-        int choice;
-        do {
-            System.out.println("\n*** Banking System Application ***");
-            System.out.println("1. Create a new account");
-            System.out.println("2. Display all account details");
-            System.out.println("3. Deposit the amount");
-            System.out.println("4. Withdraw the amount");
-            System.out.println("5. Transfer between accounts");
-            System.out.println("6. Exit");
-            System.out.print("Enter your choice: ");
-            choice = sc.nextInt();
-
-            switch (choice) {
-                case 1:
-                    if (accountCount < 2) {
-                        accounts[accountCount] = new BankDetails();
-                        accounts[accountCount].openAccount();
-                        accountCount++;
-                    } else {
-                        System.out.println("You can only create up to two accounts.");
-                    }
-                    break;
-                case 2:
-                    for (int i = 0; i < accountCount; i++) {
-                        accounts[i].showAccount();
-                    }
-                    break;
-                case 3:
-                    System.out.print("Enter account number: ");
-                    String deposit_ac = sc.next();
-                    boolean found = false;
-                    for (int i = 0; i < accountCount; i++) {
-                        if (accounts[i].search(deposit_ac)) {
-                            accounts[i].deposit();
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        System.out.println("Search failed! Account doesn't exist.");
-                    }
-                    break;
-                case 4:
-                    System.out.print("Enter account number: ");
-                    String withdraw_ac = sc.next();
-                    found = false;
-                    for (int i = 0; i < accountCount; i++) {
-                        if (accounts[i].search(withdraw_ac)) {
-                            accounts[i].withdrawal();
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        System.out.println("Search failed! Account doesn't exist.");
-                    }
-                    break;
-                case 5:
-                    if (accountCount < 2) {
-                        System.out.println("Both accounts must exist to transfer funds.");
-                        break;
-                    }
-                    System.out.print("Enter source account number: ");
-                    String srcAccNo = sc.next();
-                    System.out.print("Enter destination account number: ");
-                    String destAccNo = sc.next();
-                    BankDetails source = null, destination = null;
-                    for (int i = 0; i < accountCount; i++) {
-                        if (accounts[i].getAccNo().equals(srcAccNo)) {
-                            source = accounts[i];
-                        }
-                        if (accounts[i].getAccNo().equals(destAccNo)) {
-                            destination = accounts[i];
-                        }
-                    }
-                    if (source != null && destination != null) {
-                        source.transfer(destination);
-                    } else {
-                        System.out.println("Invalid source or destination account number.");
-                    }
-                    break;
-                case 6:
-                    System.out.println("Thank you for using the Banking System. Goodbye!");
-                    break;
-                default:
-                    System.out.println("Invalid choice!");
-            }
-        } while (choice != 6);
     }
 }
