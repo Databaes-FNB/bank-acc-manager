@@ -5,8 +5,8 @@ class BankDetails {
     private String accno; // Automatically generated account number
     private String name;
     private String acc_type;
-    private long savings_balance;
-    private long cheque_balance;
+    private long savings_balance = 0; // Initialize savings balance to zero
+    private long cheque_balance = 0;  // Initialize cheque balance to zero
     Scanner sc = new Scanner(System.in);
 
     // Method to open a new account
@@ -18,12 +18,9 @@ class BankDetails {
         acc_type = sc.next();
         System.out.print("Enter Name: ");
         name = sc.next();
-        System.out.print("Enter Savings Balance: ");
-        savings_balance = sc.nextLong();
-        System.out.print("Enter Cheque Balance: ");
-        cheque_balance = sc.nextLong();
 
         System.out.println("Account created successfully! Your Account Number is: " + accno);
+        System.out.println("Savings Balance and Cheque Balance have been initialized to 0.");
     }
 
     // Method to display account details
@@ -32,6 +29,7 @@ class BankDetails {
         System.out.println("Account no.: " + accno);
         System.out.println("Account type: " + acc_type);
         System.out.println("Savings Balance: " + savings_balance);
+        System.out.println("Cheque Balance: " + cheque_balance);
     }
 
     // Method to deposit money
