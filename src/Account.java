@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Account {
 
-    private String accountHolder;
+    protected String accountHolder;
     private String accountNumber;
     private double balance;
 
