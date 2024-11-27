@@ -1,4 +1,4 @@
-public class ChequeAccount{
+public class ChequeAccount {
 
 
 

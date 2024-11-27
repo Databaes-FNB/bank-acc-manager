@@ -1,0 +1,48 @@
+Index: src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Main{\r\n\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Main.java b/src/Main.java
+--- a/src/Main.java	(revision e2df17d877b48ba957f0b91e7370467f66cd04d6)
++++ b/src/Main.java	(date 1732689459643)
+@@ -1,6 +1,8 @@
+ public class Main{
+ 
+-
++public static void main(String[] args){
++    
++}
+ 
+ 
+ }
+\ No newline at end of file
+Index: src/Account.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/*\r\n * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license\r\n * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template\r\n */\r\npackage bankaccountmanager;\r\nimport java.util.Random;\r\n\r\n/**\r\n *\r\n * @author Capaciti\r\n */\r\npublic class Account implements AccountInterface {\r\n    private String accountHolder;\r\n    private String accountNumber;\r\n    private double balance;\r\n\r\n    public double getBalance() {\r\n        return balance;\r\n    }\r\n\r\n    public String getAccountHolder() {\r\n        return accountHolder;\r\n    }\r\n\r\n    public void setAccountHolder(String accountHolder) {\r\n        this.accountHolder = accountHolder;\r\n    }\r\n\r\n    public String getAccountNumber() {\r\n        return accountNumber;\r\n    }\r\n\r\n    public void setAccountNumber(String accountNumber) {\r\n        this.accountNumber = accountNumber;\r\n    }\r\n\r\n    public void setBalance(double balance) {\r\n        this.balance = balance;\r\n    }\r\n\r\n    public void deposit(double amount) {    \r\n        if (amount > 0) {\r\n            setBalance(getBalance() + amount);\r\n            System.out.println(\"You have deposited: \" + amount);\r\n            System.out.println(\"New balance: \" + getBalance());\r\n        } else {\r\n            System.out.println(\"Invalid amount.\");\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param amount\r\n     * @throws Exception\r\n     */\r\n    public void withdraw(double amount) throws Exception {\r\n        if (amount > getBalance()) {\r\n            throw new Exception(\"Insufficient funds.\");\r\n        } else if (amount > 0) {\r\n            setBalance(getBalance() - amount);\r\n            System.out.println(\"Withdrawn: \" + amount);\r\n            System.out.println(\"New balance: \" + getBalance());\r\n        } else {\r\n            System.out.println(\"Invalid withdraw amount.\");\r\n        }\r\n    }\r\n    public String accountGenerator(){\r\n        Random rand = new Random();\r\n        long accountNumber;\r\n        accountNumber = 1000000l + rand.nextLong(9000000);\r\n        return String.valueOf(accountNumber);   \r\n    }\r\n    public void transfer(Account accType, double amount) throws Exception \r\n    {\r\n        if (amount > 0) {\r\n            if (this.balance >= amount) {\r\n                this.withdraw(amount); \r\n                accType.deposit(amount);\r\n                System.out.println(\"Transferred \" + amount + \" to \" + accType.getAccountHolder());\r\n            } else {\r\n                throw new Exception(\"Insufficient funds to transfer.\");\r\n            }\r\n        } else {\r\n            System.out.println(\"Invalid transfer amount.\");\r\n                         \r\n    }\r\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          \r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Account.java b/src/Account.java
+--- a/src/Account.java	(revision e2df17d877b48ba957f0b91e7370467f66cd04d6)
++++ b/src/Account.java	(date 1732689459651)
+@@ -2,14 +2,14 @@
+  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+  */
+-package bankaccountmanager;
++
+ import java.util.Random;
+ 
+ /**
+  *
+  * @author Capaciti
+  */
+-public class Account implements AccountInterface {
++public class Account{
+     private String accountHolder;
+     private String accountNumber;
+     private double balance;
