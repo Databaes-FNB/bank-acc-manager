@@ -2,14 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package bankaccountmanager;
+
 import java.util.Random;
 
 /**
  *
  * @author Capaciti
  */
-public class Account implements AccountInterface {
+public class Account {
+
     private String accountHolder;
     private String accountNumber;
     private double balance;
@@ -38,7 +39,7 @@ public class Account implements AccountInterface {
         this.balance = balance;
     }
 
-    public void deposit(double amount) {    
+    public void deposit(double amount) {
         if (amount > 0) {
             setBalance(getBalance() + amount);
             System.out.println("You have deposited: " + amount);
@@ -68,13 +69,13 @@ public class Account implements AccountInterface {
         Random rand = new Random();
         long accountNumber;
         accountNumber = 1000000l + rand.nextLong(9000000);
-        return String.valueOf(accountNumber);   
+        return String.valueOf(accountNumber);
     }
-    public void transfer(Account accType, double amount) throws Exception 
+    public void transfer(Account accType, double amount) throws Exception
     {
         if (amount > 0) {
             if (this.balance >= amount) {
-                this.withdraw(amount); 
+                this.withdraw(amount);
                 accType.deposit(amount);
                 System.out.println("Transferred " + amount + " to " + accType.getAccountHolder());
             } else {
@@ -82,8 +83,8 @@ public class Account implements AccountInterface {
             }
         } else {
             System.out.println("Invalid transfer amount.");
-                         
+
     }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
     }
 }
