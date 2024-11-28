@@ -274,7 +274,7 @@ public class Main {
             }
         });
 
-        // Apply Interest button action
+        // Apply Interest button actio
         applyInterestButton.addActionListener(e -> {
             if (savingsAccount != null) {
                 savingsAccount.applyInterest();
