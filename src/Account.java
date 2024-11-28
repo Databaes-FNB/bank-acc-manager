@@ -6,7 +6,7 @@ package bankaccountmanager;
 
 /**
  *
- * @author Capaciti
+ * @author Capacit
  */
 public class Account implements AccountInterface {
     private String accountHolder;
@@ -37,7 +37,7 @@ public class Account implements AccountInterface {
         this.balance = balance;
     }
 
-    public void deposit(double amount) {    
+    public void deposit(double amount) {
         if (amount > 0) {
             setBalance(getBalance() + amount);
             System.out.println("You have deposited: " + amount);
@@ -67,9 +67,9 @@ public class Account implements AccountInterface {
         Random rand = new Random();
         long accountNumber;
         accountNumber = 1000000l + rand.nextLong(9000000);
-        return String.valueOf(accountNumber);   
+        return String.valueOf(accountNumber);
     }
     public void transfer(String acc1, String acc2){
-    
+
     }
 }
