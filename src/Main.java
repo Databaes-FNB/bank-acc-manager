@@ -6,6 +6,7 @@ public class Main {
     private static ChequeAccount chequeAccount;
 
     public static void main(String[] args) {
+
         // Create the main frame
         JFrame frame = new JFrame("Bank Account Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,6 +45,10 @@ public class Main {
         // Account creation buttons
         JButton createSavingsButton = new JButton("Create Account");
         JButton createChequeButton = new JButton("Create Cheque Account");
+
+        // Initially disable create cheque button
+        createChequeButton.setEnabled(false);
+
         gbc.gridy = 2;
         gbc.gridx = 0;
         panel.add(createSavingsButton, gbc);
@@ -138,6 +143,9 @@ public class Main {
             viewDetailsButton.setEnabled(true);
             applyInterestButton.setEnabled(true);
             viewTransactionHistoryButton.setEnabled(true);
+
+            // Enable create cheque account button after savings account creation
+            createChequeButton.setEnabled(true);
         });
 
         // Define actions for Cheque Account creation
