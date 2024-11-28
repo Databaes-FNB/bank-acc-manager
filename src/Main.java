@@ -42,7 +42,7 @@ public class Main {
         panel.add(nameField, gbc);
 
         // Account creation buttons
-        JButton createSavingsButton = new JButton("Create Savings Account");
+        JButton createSavingsButton = new JButton("Create Account");
         JButton createChequeButton = new JButton("Create Cheque Account");
         gbc.gridy = 2;
         gbc.gridx = 0;
@@ -274,7 +274,7 @@ public class Main {
             }
         });
 
-        // Apply Interest button actio
+        // Apply Interest button action
         applyInterestButton.addActionListener(e -> {
             if (savingsAccount != null) {
                 savingsAccount.applyInterest();
