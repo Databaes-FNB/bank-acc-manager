@@ -53,16 +53,15 @@ public class Account implements AccountInterface {
      * @throws Exception
      */
     public void withdraw(double amount) throws Exception {
-        if (amount > getBalance()) {
-            throw new Exception("Insufficient funds.");
+        if (amount + withdrawalFee > getBalance()) {
+            throw new Exception("You have insufficient funds.");
         } else if (amount > 0) {
-            setBalance(getBalance() - amount);
+            setBalance(getBalance() - amount - withdrawalFee);
             System.out.println("Withdrawn: " + amount);
             System.out.println("New balance: " + getBalance());
         } else {
-            System.out.println("Invalid withdraw amount.");
+            System.out.println("Invalid withdrawal amount, amount cannot be negative.");
         }
-    }
     public String accountGenerator(){
         Random rand = new Random();
         long accountNumber;
