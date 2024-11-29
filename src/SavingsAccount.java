@@ -1,76 +1,61 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
 
 public class SavingsAccount extends Account {
-    private static final double INTEREST_RATE = 0.03; // 3% Interest Rate
-    private List<String> transactionHistory = new ArrayList<>(); // Transaction history log
+    private static final double INTEREST_RATE = 0.05; // Example interest rate for savings account
+    private AccountDAO accountDAO; // Instance of AccountDAO to interact with the database
 
-    public SavingsAccount() {
-        super();  // Calls the constructor of Account
+    // Constructor with initial balance and account number
+    public SavingsAccount(double initialBalance) {
+        super(initialBalance);  // Call the parent constructor to set the balance
+        accountDAO = new AccountDAO();  // Initialize the AccountDAO to interact with the database
     }
 
+    // Constructor with default balance of 0
+    public SavingsAccount() {
+        super(0.0);  // Default balance is 0
+        accountDAO = new AccountDAO();  // Initialize the AccountDAO to interact with the database
+    }
+
+    // Implement deposit method
     @Override
     public void deposit(double amount) {
         if (amount <= 0) {
             System.out.println("Deposit amount must be greater than zero.");
-            return;  // Reject negative or zero deposit amounts
+            return;
         }
-        super.deposit(amount);
-        transactionHistory.add("Deposited: " + amount + ", New Balance: " + getBalance());
+        double newBalance = getBalance() + amount;
+        setBalance(newBalance);  // Update the balance after deposit
+
+        // Update the balance in the database
+        accountDAO.updateBalance(getAccountNumber(), getBalance());
     }
 
-
+    // Implement withdraw method
     @Override
     public void withdraw(double amount) throws Exception {
         if (amount <= 0) {
             throw new Exception("Amount must be greater than zero.");
         }
-        super.withdraw(amount);  // Calling the superclass method to handle balance updates
-        transactionHistory.add("Withdrew: " + amount + ", New Balance: " + getBalance());
+        if (getBalance() < amount) {
+            throw new Exception("Insufficient balance.");
+        }
+        setBalance(getBalance() - amount);  // Update balance after withdrawal
+
+        // Update the balance in the database
+        accountDAO.updateBalance(getAccountNumber(), getBalance());
     }
 
-    // Method to apply interest and log the transaction
+    // Override applyInterest method
+    @Override
     public void applyInterest() {
-        if (getBalance() > 0) {
-            double interest = getBalance() * INTEREST_RATE;
-            setBalance(getBalance() + interest);
-            transactionHistory.add("Applied interest: " + interest + ", New Balance: " + getBalance());
-            System.out.println("Monthly interest of " + interest + " applied to account: " + getAccountNumber());
-            System.out.println("New Balance: " + getBalance());
-        } else {
-            System.out.println("No interest applied. Balance is zero or negative.");
-        }
+        double interest = getBalance() * INTEREST_RATE;
+        setBalance(getBalance() + interest);  // Apply interest to the balance
+
+        // Update the balance in the database after applying interest
+        accountDAO.updateBalance(getAccountNumber(), getBalance());
+
+        System.out.println("Interest applied. New balance: " + getBalance());
     }
-
-    // Transfer method for Savings Account to another Account
-    public void transferTo(Account targetAccount, double amount) {
-        try {
-            super.transfer(targetAccount, amount); // Use the superclass transfer method
-            transactionHistory.add("Transferred: " + amount + " to " + targetAccount.getAccountHolder());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    // Print transaction history with a dialog box in the GUI
-    public void printTransactionHistory() {
-        StringBuilder history = new StringBuilder("Transaction History for Account: " + getAccountNumber() + "\n");
-
-        if (transactionHistory.isEmpty()) {
-            history.append("No transactions recorded.");
-        } else {
-            for (String transaction : transactionHistory) {
-                history.append(transaction).append("\n");
-            }
-        }
-
-        // Show the history in a dialog box
-        JTextArea textArea = new JTextArea(history.toString());
-        textArea.setEditable(false);  // Make it non-editable
-        JOptionPane.showMessageDialog(null, new JScrollPane(textArea), "Transaction History", JOptionPane.INFORMATION_MESSAGE);
-    }
-
 }
-
-
