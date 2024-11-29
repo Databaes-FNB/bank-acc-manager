@@ -12,6 +12,7 @@ public class Account implements AccountInterface {
     private String accountHolder;
     private String accountNumber;
     private double balance;
+    private final double withdrawalFee = 6.00;
 
     public double getBalance() {
         return balance;
