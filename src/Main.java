@@ -4,7 +4,6 @@ import java.awt.*;
 public class Main {
     private static SavingsAccount savingsAccount;
     private static ChequeAccount chequeAccount;
-    private static AccountDAO accountDAO = new AccountDAO();  // Create an AccountDAO instance
 
     public static void main(String[] args) {
         // Create the main frame
@@ -43,7 +42,7 @@ public class Main {
         panel.add(nameField, gbc);
 
         // Account creation buttons
-        JButton createSavingsButton = new JButton("Create Savings Account");
+        JButton createSavingsButton = new JButton("Create Account");
         JButton createChequeButton = new JButton("Create Cheque Account");
         gbc.gridy = 2;
         gbc.gridx = 0;
@@ -58,6 +57,8 @@ public class Main {
         JButton viewBalanceButton = new JButton("View Balance");
         JButton viewDetailsButton = new JButton("View Details");
         JButton applyInterestButton = new JButton("Apply Interest");
+        JButton viewTransactionHistoryButton = new JButton("View Transaction History");
+        JButton issueChequeButton = new JButton("Issue Cheque");
         JButton exitButton = new JButton("Exit");
 
         // Initially disable operation buttons
@@ -67,6 +68,8 @@ public class Main {
         viewBalanceButton.setEnabled(false);
         viewDetailsButton.setEnabled(false);
         applyInterestButton.setEnabled(false);
+        viewTransactionHistoryButton.setEnabled(false);
+        issueChequeButton.setEnabled(false);
 
         gbc.gridy = 3;
         gbc.gridx = 0;
@@ -87,6 +90,12 @@ public class Main {
         panel.add(applyInterestButton, gbc);
 
         gbc.gridy = 6;
+        gbc.gridx = 0;
+        panel.add(viewTransactionHistoryButton, gbc);
+        gbc.gridx = 1;
+        panel.add(issueChequeButton, gbc);
+
+        gbc.gridy = 7;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         panel.add(exitButton, gbc);
@@ -109,12 +118,17 @@ public class Main {
             savingsAccount.setAccountNumber(savingsAccount.accountGenerator());
             savingsAccount.setBalance(0.0);
 
-            // Insert account into the database
-            accountDAO.insertAccount(savingsAccount.getAccountNumber(), savingsAccount.getAccountHolder(), savingsAccount.getBalance(), "Savings", 0.0, 3.5);
-
             JOptionPane.showMessageDialog(frame, "Savings Account created successfully!\n" +
                     "Account Holder: " + savingsAccount.getAccountHolder() + "\n" +
                     "Account Number: " + savingsAccount.getAccountNumber());
+
+            // Remove input components from the GUI
+            panel.remove(nameLabel);
+            panel.remove(nameField);
+
+            // Revalidate and repaint the panel
+            panel.revalidate();
+            panel.repaint();
 
             // Enable operation buttons for savings account
             depositButton.setEnabled(true);
@@ -122,7 +136,8 @@ public class Main {
             transferButton.setEnabled(true);
             viewBalanceButton.setEnabled(true);
             viewDetailsButton.setEnabled(true);
-            applyInterestButton.setEnabled(true);  // Enable interest application for savings
+            applyInterestButton.setEnabled(true);
+            viewTransactionHistoryButton.setEnabled(true);
         });
 
         // Define actions for Cheque Account creation
@@ -141,12 +156,18 @@ public class Main {
             chequeAccount.setAccountHolder(name);
             chequeAccount.setAccountNumber(chequeAccount.accountGenerator());
 
-            // Insert account into the database
-            accountDAO.insertAccount(chequeAccount.getAccountNumber(), chequeAccount.getAccountHolder(), chequeAccount.getBalance(), "Cheque", overdraftLimit, 0.0);
-
             JOptionPane.showMessageDialog(frame, "Cheque Account created successfully!\n" +
                     "Account Holder: " + chequeAccount.getAccountHolder() + "\n" +
-                    "Account Number: " + chequeAccount.getAccountNumber());
+                    "Account Number: " + chequeAccount.getAccountNumber() + "\n" +
+                    "Overdraft Limit: " + overdraftLimit);
+
+            // Remove input components from the GUI
+            panel.remove(nameLabel);
+            panel.remove(nameField);
+
+            // Revalidate and repaint the panel
+            panel.revalidate();
+            panel.repaint();
 
             // Enable operation buttons for cheque account
             depositButton.setEnabled(true);
@@ -154,89 +175,175 @@ public class Main {
             transferButton.setEnabled(true);
             viewBalanceButton.setEnabled(true);
             viewDetailsButton.setEnabled(true);
-            applyInterestButton.setEnabled(false);  // Cheque accounts don't get interest
+            issueChequeButton.setEnabled(true);
         });
 
-        // Define action for deposit button
+        // Remaining button actions are unchanged...
+        // Deposit button action
         depositButton.addActionListener(e -> {
-            String input = JOptionPane.showInputDialog("Enter amount to deposit:");
+            String input = JOptionPane.showInputDialog(frame, "Enter amount to deposit:");
             try {
                 double amount = Double.parseDouble(input);
-                if (savingsAccount != null) {
+
+                // Check if the amount is positive
+                if (amount <= 0) {
+                    JOptionPane.showMessageDialog(frame, "Deposit amount must be greater than zero.");
+                    return;
+                }
+
+                // Ask the user which account to deposit to
+                String[] options = {"Savings Account", "Cheque Account"};
+                int choice = JOptionPane.showOptionDialog(frame, "Select account to deposit into:",
+                        "Deposit Options", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                // Perform deposit based on user's choice
+                if (choice == 0 && savingsAccount != null) {
                     savingsAccount.deposit(amount);
-                } else if (chequeAccount != null) {
+                    JOptionPane.showMessageDialog(frame, "Deposited: " + amount + " to Savings Account.");
+                } else if (choice == 1 && chequeAccount != null) {
                     chequeAccount.deposit(amount);
+                    JOptionPane.showMessageDialog(frame, "Deposited: " + amount + " to Cheque Account.");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Please create both accounts first.");
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Invalid amount.");
+                JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a valid number.");
             }
         });
 
-        // Define action for withdraw button
+        // Withdraw button action
         withdrawButton.addActionListener(e -> {
-            String input = JOptionPane.showInputDialog("Enter amount to withdraw:");
+            String input = JOptionPane.showInputDialog(frame, "Enter amount to withdraw:");
             try {
                 double amount = Double.parseDouble(input);
-                if (savingsAccount != null) {
-                    savingsAccount.withdraw(amount);
-                } else if (chequeAccount != null) {
-                    chequeAccount.withdraw(amount);
+
+                // Check if the amount is positive
+                if (amount <= 0) {
+                    JOptionPane.showMessageDialog(frame, "Withdrawal amount must be greater than zero.");
+                    return;  // Reject negative or zero withdrawal amounts
                 }
+
+                // Ask the user which account to withdraw from
+                String[] options = {"Savings Account", "Cheque Account"};
+                int choice = JOptionPane.showOptionDialog(frame, "Select account to withdraw from:",
+                        "Withdrawal Options", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                // Perform withdrawal based on user's choice
+                if (choice == 0 && savingsAccount != null) {
+                    savingsAccount.withdraw(amount);
+                    JOptionPane.showMessageDialog(frame, "Withdrew: " + amount + " from Savings Account.");
+                } else if (choice == 1 && chequeAccount != null) {
+                    chequeAccount.withdraw(amount);
+                    JOptionPane.showMessageDialog(frame, "Withdrew: " + amount + " from Cheque Account.");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Please create both accounts first.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a valid number.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, ex.getMessage());
             }
         });
 
-        // Define action for transfer button
+        // Transfer button action
         transferButton.addActionListener(e -> {
             if (savingsAccount == null || chequeAccount == null) {
-                JOptionPane.showMessageDialog(frame, "Both accounts need to be created before transferring.");
+                JOptionPane.showMessageDialog(frame, "Both accounts must be created to transfer funds.");
                 return;
             }
 
-            String input = JOptionPane.showInputDialog("Enter amount to transfer from Savings to Cheque:");
+            String input = JOptionPane.showInputDialog(frame, "Enter amount to transfer:");
             try {
                 double amount = Double.parseDouble(input);
-                savingsAccount.transfer(chequeAccount, amount);
+
+                String[] options = {"Savings to Cheque", "Cheque to Savings"};
+                int choice = JOptionPane.showOptionDialog(frame, "Select transfer direction:",
+                        "Transfer Options", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                if (choice == 0) {
+                    savingsAccount.transfer(chequeAccount, amount);
+                } else if (choice == 1) {
+                    chequeAccount.transfer(savingsAccount, amount);
+                }
+
+                JOptionPane.showMessageDialog(frame, "Transfer successful: " + amount);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a valid number.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, ex.getMessage());
             }
         });
 
-        // Define action for view balance button
+        // Apply Interest button action
+        applyInterestButton.addActionListener(e -> {
+            if (savingsAccount != null) {
+                savingsAccount.applyInterest();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please create a savings account first.");
+            }
+        });
+
+        // View Transaction History button action
+        viewTransactionHistoryButton.addActionListener(e -> {
+            if (savingsAccount != null) {
+                savingsAccount.printTransactionHistory();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please create a savings account first.");
+            }
+        });
+
+        // Issue Cheque button action
+        issueChequeButton.addActionListener(e -> {
+            if (chequeAccount != null) {
+                String input = JOptionPane.showInputDialog(frame, "Enter cheque amount:");
+                try {
+                    double amount = Double.parseDouble(input);
+                    chequeAccount.issueCheque(amount);  // Call the issueCheque method
+                    JOptionPane.showMessageDialog(frame, "Cheque issued successfully for: " + amount);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Invalid amount entered.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, ex.getMessage());
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please create a cheque account first.");
+            }
+        });
+
+
+        // View Balance button action
         viewBalanceButton.addActionListener(e -> {
             if (savingsAccount != null) {
                 JOptionPane.showMessageDialog(frame, "Savings Account Balance: " + savingsAccount.getBalance());
-            } else if (chequeAccount != null) {
+            }
+            if (chequeAccount != null) {
                 JOptionPane.showMessageDialog(frame, "Cheque Account Balance: " + chequeAccount.getBalance());
             }
         });
 
-        // Define action for view details button
+        // View Details button action
         viewDetailsButton.addActionListener(e -> {
             if (savingsAccount != null) {
-                JOptionPane.showMessageDialog(frame, "Account Holder: " + savingsAccount.getAccountHolder() +
-                        "\nAccount Number: " + savingsAccount.getAccountNumber());
-            } else if (chequeAccount != null) {
-                JOptionPane.showMessageDialog(frame, "Account Holder: " + chequeAccount.getAccountHolder() +
-                        "\nAccount Number: " + chequeAccount.getAccountNumber());
+                JOptionPane.showMessageDialog(frame, "Savings Account Details:\n" +
+                        "Account Holder: " + savingsAccount.getAccountHolder() + "\n" +
+                        "Account Number: " + savingsAccount.getAccountNumber() + "\n" +
+                        "Balance: " + savingsAccount.getBalance());
+            }
+            if (chequeAccount != null) {
+                JOptionPane.showMessageDialog(frame, "Cheque Account Details:\n" +
+                        "Account Holder: " + chequeAccount.getAccountHolder() + "\n" +
+                        "Account Number: " + chequeAccount.getAccountNumber() + "\n" +
+                        "Balance: " + chequeAccount.getBalance());
             }
         });
 
-        // Define action for apply interest button
-        applyInterestButton.addActionListener(e -> {
-            if (savingsAccount != null) {
-                savingsAccount.applyInterest();
-                JOptionPane.showMessageDialog(frame, "Interest applied! New balance: " + savingsAccount.getBalance());
-            }
-        });
-
-        // Define action for exit button
+        // Exit button action
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            JOptionPane.showMessageDialog(frame, "Thank you for using the Bank Account Management System!");
+            frame.dispose();
         });
 
-        // Show the frame
         frame.setVisible(true);
+
     }
 }

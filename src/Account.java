@@ -1,27 +1,21 @@
-import java.util.Random;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package bankaccountmanager;
 
-public abstract class Account implements AccountInterface {
-    private String accountNumber;
+/**
+ *
+ * @author Capacit
+ */
+public class Account implements AccountInterface {
     private String accountHolder;
+    private String accountNumber;
     private double balance;
+    private final double withdrawalFee = 6.00;
 
-    // Constructor to initialize balance
-    public Account(double initialBalance) {
-        this.balance = initialBalance;
-    }
-
-    // Default constructor (if needed)
-    public Account() {
-        this.balance = 0.0; // Set balance to 0 if no initial balance is provided
-    }
-
-    // Getters and setters
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public double getBalance() {
+        return balance;
     }
 
     public String getAccountHolder() {
@@ -32,41 +26,61 @@ public abstract class Account implements AccountInterface {
         this.accountHolder = accountHolder;
     }
 
-    public double getBalance() {
-        return balance;
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public void setBalance(double balance) {
         this.balance = balance;
     }
 
-    // Abstract method from AccountInterface
-    @Override
-    public abstract void deposit(double amount);
-
-    @Override
-    public abstract void withdraw(double amount) throws Exception;
-
-    // Method to generate a random account number
-    public String accountGenerator() {
-        Random rand = new Random();
-        int accountNumber = rand.nextInt(1000000000);  // Random account number of 10 digits
-        return String.format("%010d", accountNumber);  // Return the account number as a 10-digit string
-    }
-
-    // Method to apply interest, to be implemented in specific account types (e.g., SavingsAccount)
-    public void applyInterest() {
-        // Default implementation (if needed, otherwise can be overridden)
-        System.out.println("Interest applied to account.");
-    }
-
-    // Transfer method for transferring between accounts
-    @Override
-    public void transfer(Account accType, double amount) throws Exception {
-        if (this.getBalance() < amount) {
-            throw new Exception("Insufficient funds for transfer.");
+    public void deposit(double amount) {
+        if (amount > 0) {
+            setBalance(getBalance() + amount);
+            System.out.println("You have deposited: " + amount);
+            System.out.println("New balance: " + getBalance());
+        } else {
+            System.out.println("Invalid amount.");
         }
-        this.setBalance(this.getBalance() - amount);  // Deduct from current account
-        accType.setBalance(accType.getBalance() + amount);  // Add to the target account
+    }
+
+    /**
+     *
+     * @param amount
+     * @throws Exception
+     */
+    public void withdraw(double amount) throws Exception {
+        if (amount + withdrawalFee > getBalance()) {
+            throw new Exception("You have insufficient funds.");
+        } else if (amount > 0) {
+            setBalance(getBalance() - amount - withdrawalFee);
+            System.out.println("Withdrawn: " + amount);
+            System.out.println("New balance: " + getBalance());
+        } else {
+            System.out.println("Invalid withdrawal amount, amount cannot be negative.");
+        }
+    public String accountGenerator(){
+        Random rand = new Random();
+        long accountNumber;
+        accountNumber = 1000000l + rand.nextLong(9000000);
+        return String.valueOf(accountNumber);
+    }
+   public void transfer(Account accType, double amount) throws Exception 
+    {
+        if (amount > 0) {
+            if (this.balance >= amount) {
+                this.withdraw(amount); 
+                accType.deposit(amount);
+                System.out.println("Transferred " + amount + " to " + accType.getAccountHolder());
+            } else {
+                throw new Exception("Insufficient funds to transfer.");
+            }
+        } else {
+            System.out.println("Invalid transfer amount.");
+                         
     }
 }
